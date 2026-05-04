@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generate | Comiko</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+
+<style>
+
+/* ROOT */
+:root {
+  --bg: #ffffff;
+  --primary: #FF5A0A;
+  --text: #000000;
+  --muted: #555;
+  --border: #eaeaea;
+}
+
+/* GLOBAL */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-text-stroke: 0.3px rgba(0,0,0,0.2);
+}
+
+body {
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* NAVBAR */
+.navbar {
+  position: sticky;
+  top: 0;
+  background: white;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 10%;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-size: 20px;
+}
+
+.nav-links a {
+  margin-left: 30px;
+  text-decoration: none;
+  color: black;
+}
+
+/* MAIN */
+.container {
+  padding: 80px 10%;
+}
+
+/* TITLE */
+.title {
+  font-family: 'Bangers', cursive;
+  font-size: 90px;
+  color: var(--primary);
+  text-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+  -webkit-text-stroke: 1px black;
+  margin-bottom: 40px;
+}
+
+/* INPUT */
+.input-box {
+  width: 100%;
+  border: 2px solid black;
+  padding: 20px;
+  font-size: 16px;
+  resize: none;
+  height: 150px;
+  outline: none;
+}
+
+/* OPTIONS */
+.options {
+  margin-top: 30px;
+  display: flex;
+  gap: 20px;
+}
+
+select {
+  padding: 10px;
+  border: 2px solid black;
+  background: white;
+  cursor: pointer;
+}
+
+/* BUTTON */
+.generate-btn {
+  margin-top: 30px;
+  display: inline-block;
+  padding: 12px 30px;
+  border: 2px solid black;
+  background: var(--primary);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.generate-btn.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* LOADER */
+.loader {
+  margin-top: 20px;
+  display: none;
+  font-weight: bold;
+}
+
+.loader.active {
+  display: block;
+}
+
+/* OUTPUT */
+.output {
+  margin-top: 80px;
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.panel {
+  border: 3px solid black;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  text-align: center;
+}
+
+.panel img {
+  width: 100%;
+  height: auto;
+  border-bottom: 3px solid black;
+}
+
+.panel-text {
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* HOW TO USE */
+.how {
+  margin-top: 120px;
+}
+
+.how h2 {
+  font-family: 'Bangers';
+  font-size: 70px;
+  margin-bottom: 40px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 30px;
+}
+
+.step-box {
+  border: 3px solid black;
+  padding: 30px;
+}
+
+.step-box h3 {
+  margin-bottom: 10px;
+}
+
+/* EXAMPLES */
+.examples {
+  margin-top: 120px;
+}
+
+.examples h2 {
+  font-family: 'Bangers';
+  font-size: 70px;
+  margin-bottom: 40px;
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 20px;
+}
+
+.example {
+  height: 220px;
+  border: 3px solid black;
+  background: repeating-linear-gradient(
+    45deg,
+    #fff,
+    #fff 10px,
+    #eee 10px,
+    #eee 20px
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+/* SPACER */
+.spacer {
+  height: 200px;
+}
+
+/* FOOTER */
+.footer {
+  height: 100vh;
+  width: 100vw;
+  margin-left: calc(-10vw);
+  padding: 80px 10%;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.footer-top p {
+  color: #aaa;
+  margin-bottom: 20px;
+}
+
+.footer-top h1 {
+  font-family: 'Bangers', cursive;
+  font-size: 140px;
+  cursor: pointer;
+  transition: 0.3s;
+  text-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+}
+
+.footer-top h1:hover {
+  transform: translateX(20px);
+  color: var(--primary);
+}
+
+.footer-bottom {
+  border-top: 1px solid #333;
+  padding-top: 0px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.footer-links a {
+  margin-left: 20px;
+  color: white;
+  text-decoration: none;
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .title { font-size: 50px; }
+  .panels, .steps, .example-grid { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+  <div class="logo">COMIKO</div>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="contact.html">Contact</a>
+  </div>
+</div>
+
+<div class="container">
+
+<h1 class="title">GENERATE COMIC</h1>
+
+<textarea class="input-box" placeholder="Describe your comic... characters, scene, dialogue, vibe..."></textarea>
+
+<div class="options">
+  <select id="style-select">
+    <option value="Anime">Anime</option>
+    <option value="Comic">Comic</option>
+    <option value="Realistic">Realistic</option>
+  </select>
+
+  <select id="panel-select">
+    <option value="3">3 Panels</option>
+    <option value="6">6 Panels</option>
+    <option value="9">9 Panels</option>
+  </select>
+</div>
+
+<button class="generate-btn" id="btn" onclick="generateComic()">Generate</button>
+<div class="loader" id="loader">Generating...</div>
+
+<div class="output">
+  <div class="panels" id="panels"></div>
+</div>
+
+</div>
+
+<script>
+
+async function generateComic(){
+
+  const btn = document.getElementById("btn");
+  const loader = document.getElementById("loader");
+
+  btn.classList.add("loading");
+  loader.classList.add("active");
+
+  try {
+
+    const prompt = document.querySelector(".input-box").value;
+    const style = document.getElementById("style-select").value;
+    const panelCount = parseInt(document.getElementById("panel-select").value);
+
+    const res = await fetch("http://localhost:5000/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ prompt, style, panelCount })
+    });
+
+    const panels = await res.json();
+
+    console.log(panels);
+
+    const container = document.getElementById("panels");
+    container.innerHTML = "";
+
+    panels.forEach(p => {
+
+      const div = document.createElement("div");
+      div.className = "panel";
+
+      // ✅ better fallback logic
+      let imageSrc = "https://placehold.co/512x512?text=Loading...";
+
+      if (p.imageUrl && p.imageUrl.startsWith("data:image")) {
+        imageSrc = p.imageUrl;
+      }
+
+      div.innerHTML = `
+        <img src="${imageSrc}" alt="Panel ${p.panel}" 
+             onerror="this.src='https://placehold.co/512x512?text=Image+Failed'">
+        <div class="panel-text">
+          <strong>${p.dialogue}</strong>
+        </div>
+      `;
+
+      container.appendChild(div);
+
+    });
+
+  } catch (err) {
+
+    console.error(err);
+    alert("Backend not running or error occurred");
+
+  }
+
+  btn.classList.remove("loading");
+  loader.classList.remove("active");
+
+}
+
+</script>
+
+</body>
+</html>
